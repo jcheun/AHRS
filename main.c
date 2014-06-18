@@ -2,23 +2,33 @@
 #include <libgen.h> 
 #include <stdio.h>
 #include <unistd.h>
-
+#include <stdint.h>
+#include <time.h>
 
 #include "debugf.h"
 #include "linuxHAL.h"
+#include "MPU6050.h"
 
 int main(int argc, char** argv) {
+   time_t start,stop;
    Exec_Name = basename(argv[0]);
    if (getopt(argc, argv, "@:") == '@') set_debugflags(optarg);
-   printf("Hello World! %s\n", Exec_Name);
+   
    I2C_init(1);
-   unsigned char data[1];
-   data[0] = 0;
-   //I2C_read(0x68, 0x6B, 1, data);
-   //printf("%d\n", data[0]);
-   data[0] = 0x04;
-   I2C_write(0x68, 0x6B, 1, data);
-
-
+   MPU_Init(BIT_GFS_SEL_1000, BIT_AFS_SEL_4G);
+   int16_t accel[3];
+   int16_t gyro[3];
+   //int i = 0;
+   time(&start);
+   //while (i++ < 1000) {
+      //MPU_GetSensors(accel, gyro);
+      //MPU_GetAccel(accel);
+      //MPU_GetGyro(gyro);
+      //printf("Accel: %d\t%d\t%d\t", accel[0], accel[1], accel[2]);
+      //printf("Gyro: %d\t%d\t%d\n",  gyro[0], gyro[1], gyro[2]);
+  // }
+   delay_ms(1500);
+   time(&stop);
+   printf("Finish in about %f seconds.\n", difftime(stop,start));
    return 0;
 }
