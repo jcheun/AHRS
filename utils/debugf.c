@@ -17,12 +17,12 @@ int Exit_Status = EXIT_SUCCESS;
 static char *debugflags = "";
 static bool alldebugflags = false;
 
-void __stubprintf (char *filename, int line, const char *func,
-                   char *format, ...) {
+void __errorprintf (char *filename, int line, const char *func,
+                    char *format, ...) {
    va_list args;
    fflush (NULL);
-   fprintf (stdout, "%s: STUB (%s:%d) %s:\n",
-            Exec_Name, filename, line, func);
+   fprintf (stdout, "Error: %s[%d] %s(): ",
+            filename, line, func);
    va_start (args, format);
    vfprintf (stdout, format, args);
    va_end (args);

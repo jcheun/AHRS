@@ -16,11 +16,11 @@ extern char *Exec_Name;
 extern int Exit_Status;
 
 //
-// Support for stub messages.
+// Support for error messages.
 //
-#define STUBPRINTF(...) \
-        __stubprintf (__FILE__, __LINE__, __func__, __VA_ARGS__)
-void __stubprintf (char *file, int line, const char *func,
+#define ERROR(...) \
+        __errorprintf (__FILE__, __LINE__, __func__, __VA_ARGS__)
+void __errorprintf (char *file, int line, const char *func,
                    char *format, ...);
 
 //
