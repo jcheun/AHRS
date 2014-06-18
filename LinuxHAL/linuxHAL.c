@@ -27,7 +27,8 @@ int  I2C_open(void);
 void I2C_close(void);
 
 /*-- Variables -------------------------------------------------------*/
-int  I2C_file = -1;
+int  I2C_sAddr = -1;
+int  I2C_file  = -1;
 char I2C_filename[11];
 
 /***********************************************************************
@@ -74,6 +75,7 @@ void I2C_close(void) {
    if (I2C_file >= 0) {
       close(I2C_file);
       I2C_file = -1;
+      I2C_sAddr = -1;
    }
    DEBUGF('i', "I2C bus %s closed\n", I2C_filename);
 }
@@ -86,11 +88,13 @@ void I2C_close(void) {
  * Return         : 0 if Success
  **********************************************************************/
 int I2C_setSlave(int sAddr) {
+   if (I2C_sAddr == sAddr) return 0;
    if (ioctl(I2C_file, I2C_SLAVE, sAddr) < 0) {
       fprintf(stderr, "Error: Could not set slave address 0x%02x: %s\n",
               sAddr, strerror(errno)); 
       return -1;
    }
+   I2C_sAddr = sAddr;
 
    DEBUGF('i', "Slave Address 0x%02x set\n", sAddr);
    return 0;
@@ -110,7 +114,7 @@ int I2C_read(uint8_t sAddr, uint8_t rAddr,
    if (I2C_write(sAddr, rAddr, 0, NULL))
       return -1;
 
-   int bytes;
+   int bytes = 0;
    for (int tries = 1; tries <= 3 && bytes != length; ++tries) {
       bytes = read(I2C_file, data, length);
       if (bytes < 0) {
@@ -130,8 +134,9 @@ int I2C_read(uint8_t sAddr, uint8_t rAddr,
               length);
       return -1;
    }
-
-   DEBUGF('i', "Read %d bytes from device 0x%02x\n", length, sAddr);
+   
+   DEBUGF('i', "Read %d bytes from device 0x%02x at reg 0x%02x\n",
+          length, sAddr, rAddr);
    return 0;
 }
 
@@ -177,7 +182,8 @@ int I2C_write(uint8_t sAddr, uint8_t rAddr,
       }
    }
    
-   DEBUGF('i', "Written %d bytes to device 0x%02x\n", length, sAddr);
+   DEBUGF('i', "Written %d bytes to device 0x%02x at reg 0x%02x\n",
+          length, sAddr, rAddr);
    return 0;
 }
 
