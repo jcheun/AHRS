@@ -15,7 +15,7 @@
 #define MPU6050_HW_ADDR    (0x68)
 
 /* Sample Rate Divider */
-#define REG_SMPLRT_DIV     (0x19)
+#define REG_SMPRT_DIV      (0x19)
 
 /* Configuration */
 #define REG_CONFIG         (0x1A)
@@ -77,11 +77,12 @@
 /* WHO_AM_I */
 #define REG_WHO_AM_I       (0x75)
 
-int MPU_Init(uint8_t gyroFsr, uint8_t accelFsr);
+int MPU_Init(uint8_t gyroFsr, uint8_t accelFsr,
+             uint16_t sampleRate, uint8_t lpf);
 
 int MPU_GetAccel(int16_t *data);
 int MPU_GetGyro(int16_t *data);
 int MPU_GetSensors(int16_t *accel, int16_t *gyro);
-
+int MPU_SetSampleRate(uint16_t rate, uint8_t lpf);
 
 #endif
