@@ -49,6 +49,19 @@
 #define BIT_ZG_FIFO_EN     (0x10)
 #define BIT_ACCEL_FIFO_EN  (0x08)
 
+/* INT Pin/Bypass Enable Configuration */
+#define REG_INT_PIN_CFG    (0x37)
+#define BIT_INT_LEVEL      (0x80)
+#define BIT_I2C_BYPASS_EN  (0x02)
+
+/* Interrrupt Enable */
+#define REG_INT_ENABLE     (0x38)
+#define BIT_DATA_RDY_EN    (0x01)
+
+/* Interrupt Status */
+#define REG_INT_STATUS     (0x3A)
+#define BIT_FIFO_OFLOW_INT (0x10)
+
 /* Accelerometer Measurements */
 #define REG_ACCEL_OUT      (0x3B)
 
@@ -58,6 +71,8 @@
 /* User Control */
 #define REG_USER_CTRL      (0x6A)
 #define BIT_FIFO_EN        (0x40)
+#define BIT_I2C_MST_EN     (0x20)
+#define BIT_FIFO_RESET     (0x04)
 
 /* Power Management 1 */
 #define REG_PWR_MGMT_1     (0x6B)
@@ -83,6 +98,9 @@ int MPU_Init(uint8_t gyroFsr, uint8_t accelFsr,
 int MPU_GetAccel(int16_t *data);
 int MPU_GetGyro(int16_t *data);
 int MPU_GetSensors(int16_t *accel, int16_t *gyro);
+int MPU_GetFIFO(int16_t *accel, int16_t *gyro);
+int MPU_SetBypass(void);
+int MPU_ResetFIFO(void);
 int MPU_SetSampleRate(uint16_t rate, uint8_t lpf);
 
 #endif

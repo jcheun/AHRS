@@ -21,11 +21,17 @@ int main(int argc, char** argv) {
    MPU_Init(BIT_GFS_SEL_1000, BIT_AFS_SEL_4G, 1000, BIT_DLPF_CFG_256);
    int i = 0; 
    gettimeofday(&start, NULL);
-
-   while (i++ < 1000) {
-      MPU_GetSensors(accel, gyro);
-      printf("Accel: %d\t%d\t%d\t", accel[0], accel[1], accel[2]);
-      printf("Gyro: %d\t%d\t%d\n",  gyro[0], gyro[1], gyro[2]);
+   while (i < 1000) {
+      //if(MPU_GetIntStatus(&status) == 0) {
+      //   printf("Int status : %d\n", status);
+     // }
+      //if (MPU_GetFIFO(accel, gyro) == 0) {
+         i++;
+      
+          MPU_GetSensors(accel, gyro);
+         //printf("Accel: %d\t%d\t%d\t", accel[0], accel[1], accel[2]);
+         //printf("Gyro: %d\t%d\t%d\n",  gyro[0], gyro[1], gyro[2]);
+     // }
    }
 
    gettimeofday(&stop, NULL);
