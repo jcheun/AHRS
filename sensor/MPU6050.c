@@ -12,7 +12,7 @@
 #include "debugf.h"
 #include "linuxHAL.h"
 #include "MPU6050.h"
-
+int get_biases ();
 /***********************************************************************
  * Function Name  : MPU_Init
  * Description    : Initialize MPU6050
@@ -86,7 +86,7 @@ int MPU_Init(uint8_t gyroFsr, uint8_t accelFsr,
    
    /* Enable FIFO */
    if (MPU_ResetFIFO())
-      return -1;
+      return -1; 
 
    DEBUGF('m', "MPU6050 Succesfully Init\n");  
    return 0;
@@ -102,6 +102,48 @@ int MPU_GetIntStatus(int16_t *data) {
    data[0] = (tmp[0] << 8) | tmp[1];
    return 0;
 }*/
+
+int get_biases () {
+   uint8_t data;
+   int hw_test = 0;
+
+   data = BIT_DLPF_CFG_188;
+   if (I2C_write (MPU6050_HW_ADDR, REG_CONFIG, 1, &data)) {  
+      ERROR ("Fail to set Low Pass Filter\n");
+      return -1;
+   }
+   
+   data = 0x00;
+   if (I2C_write(MPU6050_HW_ADDR, REG_SMPRT_DIV, 1, &data)) {
+      ERROR("Fail to set device Sample Rate\n");
+      return -1;
+   }
+
+   /* Set Gyroscope Full Scale Range */
+   data = 0x00 | (hw_test) ? 0xE0 : 0x00;
+   if (I2C_write(MPU6050_HW_ADDR, REG_GYRO_CONFIG, 1, &data)) {
+      ERROR("Fail to set Gyroscope Full Scale Range\n");
+      return -1;
+   }
+
+   /* Set Accelerometer Full Scale Range */
+   data = BIT_AFS_SEL_16G | (hw_test) ? 0xE0 : 0x00;;
+   if (I2C_write(MPU6050_HW_ADDR, REG_ACCEL_CONFIG, 1, &data)) {
+      ERROR("Fail to set Accelerometer Full Scale Range\n");
+      return -1;
+   }
+
+   if (hw_test) delay_ms (200);
+
+   return 0;
+}
+
+//int MPU_SelfTest (int16_t *accel, int16_t *gyro) {
+//   long accel_test[3], gyro_test[3];
+//   uint8_t a_result, g_result;
+//   
+//
+//}
 
 /***********************************************************************
  * Function Name  : MPU_ResetFIFO
@@ -302,7 +344,7 @@ int MPU_GetFIFO(int16_t *accel, int16_t *gyro) {
       return -1;
    }
 
-   uint16_t count = (tmp[0] << 8) | tmp[1]; 
+   uint16_t count = (tmp[0] << 8) | tmp[1];
    if (count < 12) return 1;
 
    if (count > 512) {
@@ -332,8 +374,6 @@ int MPU_GetFIFO(int16_t *accel, int16_t *gyro) {
  
    return 0;
 }
-
-
 
 
 

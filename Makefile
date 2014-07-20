@@ -16,7 +16,7 @@ EXECBIN   = AHRS
 all : ${EXECBIN}
 
 ${EXECBIN} : ${OBJECTS}
-		${GCC} -o $@ ${OBJECTS}
+		${GCC} -lm -o $@ ${OBJECTS}
 
 %.o : %.c
 		${GCC} ${INC_DIR} -c $<
